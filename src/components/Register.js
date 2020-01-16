@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react'
+import React, {Fragment, useState} from 'react'
 import {Link} from 'react-router-dom'
 //formik
 import { Formik, Form, Field } from 'formik';
@@ -31,7 +31,11 @@ const SignupSchema = Yup.object().shape({
   });
 
 
-const Register = () =>{
+const Register = ({history}) =>{
+
+    const [error, setError] = useState('')
+    const dispatch = useDispatch()
+    const registerUser = (user, token) => dispatch(logUsuario(user, token))
     return(
         <Fragment>
             <header className="header">
@@ -49,7 +53,25 @@ const Register = () =>{
                 }}
                 validationSchema={SignupSchema}
                 onSubmit={async (values) => {
-                    
+                    const user ={
+                        name: values.name,
+                        email: values.email,
+                        password: values.password
+                    }
+                    //console.log(user)
+                    const register = await clienteAxios.post('/client/signup', user)
+                    //console.log(register)
+                    if(register.data.message == 'error al crear el usuario'){
+                        setError('El usuario ya existe')
+                        //console.log(register.data.error)
+                        return
+                    }
+                    setError('')
+                    const token = register.data.token
+                    localStorage.setItem('token', JSON.stringify(token))
+                    localStorage.setItem('user', JSON.stringify(user))
+                    registerUser(user, token) //dispatch
+                    history.push('/home')
                 }}
                 >
                     {({ errors, touched }) => (
@@ -58,7 +80,8 @@ const Register = () =>{
                                 {errors.name && touched.name ? (<p className="alert alert-danger text-center p-0 mb-1">{errors.name}</p>) : null}
                                 {errors.email && touched.email ? (<p className="alert alert-danger text-center p-0 mb-1">{errors.email}</p>) : null}                               
                                 {errors.password && touched.password ? (<p className="alert alert-danger text-center p-0 mb-1">{errors.password}</p>) : null}
-                                {errors.passwordConfirm && touched.passwordConfirm ? (<p className="alert alert-danger text-center p-0 mb-1">{errors.passwordConfirm}</p>) : null}  
+                                {errors.passwordConfirm && touched.passwordConfirm ? (<p className="alert alert-danger text-center p-0 mb-1">{errors.passwordConfirm}</p>) : null}
+                                {error ? (<p className="alert alert-danger text-center p-0 mb-1">{error}</p>) : null}  
                             </div>
                             <div className="card col-10 col-md-6 col-lg-4 mx-auto m-4 text-secondary animated bounceInLeft">
                                 <p className="text-center pt-4 text-secondary">Registrese gratis</p>
@@ -97,6 +120,7 @@ const Register = () =>{
                                         <label>Contraseña</label>
                                         <Field 
                                             name="password" 
+                                            type="password"
                                             className="form-control"
                                             placeholder="Ingrese su contraseña"
                                         />
@@ -104,7 +128,8 @@ const Register = () =>{
                                     <div className="form-group mx-auto col-10 p-0">
                                         <label>Repetir Contraseña</label>
                                         <Field 
-                                            name="passwordConfirm" 
+                                            name="passwordConfirm"
+                                            type="password" 
                                             className="form-control"
                                             placeholder="Confirmar contraseña"
                                         />
@@ -113,12 +138,12 @@ const Register = () =>{
                                         <button className="btn btn-iniciar"> <span className="text-white">Siguiente</span> </button>
                                     </div>
                                 </Form>
+                                <button className="btn text-center text-secondary"> ¿Olvidó su contraseña? </button>
+                                <p className="text-center"><span>¿Ya tiene una cuenta?</span> <span><Link to="/login">Inicie sesión</Link></span></p>
                             </div>
                         </div>
                     )}
                 </Formik>
-                <button className="btn text-center text-secondary"> ¿Olvidó su contraseña? </button>
-                <p className="text-center"><span>¿Ya tiene una cuenta?</span> <span><Link to="/login">Inicie sesión</Link></span></p>
         </Fragment>
     )
 }
