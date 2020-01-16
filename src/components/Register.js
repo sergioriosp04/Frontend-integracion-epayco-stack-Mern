@@ -71,7 +71,7 @@ const Register = ({history}) =>{
                     localStorage.setItem('token', JSON.stringify(token))
                     localStorage.setItem('user', JSON.stringify(user))
                     registerUser(user, token) //dispatch
-                    history.push('/home')
+                    history.push('/dashboard')
                 }}
                 >
                     {({ errors, touched }) => (

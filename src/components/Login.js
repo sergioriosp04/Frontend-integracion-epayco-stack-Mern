@@ -60,7 +60,7 @@ const SignupSchema = Yup.object().shape({
                     localStorage.setItem('user', JSON.stringify(logUser))
                     localStorage.setItem('token', JSON.stringify(tokenUser))
                     usuarioLog(logUser, tokenUser) //dispatch
-                    history.push('/home')
+                    history.push('/dashboard')
                         
                 }}
             >
