@@ -1,5 +1,7 @@
 import React from 'react'
 import decoded from 'jwt-decode'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
+
 
 const Dashboard = ({history}) =>{
     // verificar si el cliente esta log
@@ -28,9 +30,7 @@ const Dashboard = ({history}) =>{
 
 
     return(
-        <div>
-            dash
-        </div>
+        <div>dash</div>
     )
 }
 
